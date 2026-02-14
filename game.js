@@ -38,7 +38,7 @@ const screens = {
 
 const countdownElement = document.getElementById('countdown');
 let destructTimer = null;
-let countdownValue = 10;
+let countdownValue = 30;
 
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
@@ -80,7 +80,7 @@ function showScreen(screenName) {
 
 // Self-Destruct Timer
 function startSelfDestruct() {
-    countdownValue = 10;
+    countdownValue = 30;
     countdownElement.textContent = countdownValue;
     
     destructTimer = setInterval(() => {
@@ -861,7 +861,7 @@ document.getElementById('restart-btn').addEventListener('click', () => {
     stopSelfDestruct();
     resetLieDetector();
     gameState.lieDetectorAttempts = 0;
-    countdownValue = 10;
+    countdownValue = 30;
     countdownElement.textContent = countdownValue;
     countdownElement.classList.remove('urgent');
     
