@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Overthinking Saviour</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <div class="title-container">
+                <h1 class="game-title">🚗 The Overthinking Saviour 🏥</h1>
+                <p class="subtitle">A Valentine's Special</p>
+                <div class="hearts">💕</div>
+            </div>
+            <div class="hero-photo">
+                <img src="assets/1.JPG" alt="The Hero" id="hero-img">
+                <p class="hero-name">Dr. Overthinking Saviour</p>
+            </div>
+            <div class="story-text">
+                <p>You are a doctor, on your way to save lives...</p>
+                <p>But destiny has other plans! 💫</p>
+            </div>
+            <button id="start-btn" class="game-btn pulse-btn">Start Journey 💕</button>
+        </div>
+
+        <!-- Cutscene: The Accident -->
+        <div id="cutscene-screen" class="screen">
+            <div class="cutscene-container">
+                <div class="scene" id="scene-0">
+                    <img src="assets/2.JPG" alt="In the car" class="scene-img">
+                    <p class="dialogue" id="dialogue-0"></p>
+                </div>
+                <div class="scene hidden" id="scene-1">
+                    <div class="crash-animation" id="crash-effect">
+                        <span class="crash-text">💥 CRASH! 💥</span>
+                    </div>
+                    <p class="dialogue" id="dialogue-1"></p>
+                </div>
+                <div class="scene hidden" id="scene-2">
+                    <img src="assets/3.JPG" alt="The injured" class="scene-img">
+                    <p class="dialogue" id="dialogue-2"></p>
+                </div>
+            </div>
+            <div class="cutscene-progress">
+                <div class="progress-dots">
+                    <span class="dot active" data-scene="0"></span>
+                    <span class="dot" data-scene="1"></span>
+                    <span class="dot" data-scene="2"></span>
+                </div>
+            </div>
+            <button id="continue-btn" class="game-btn">Continue 💕</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="game-ui">
+                <div class="health-bar-container">
+                    <span>❤️ Patient Health</span>
+                    <div class="progress-bar health-bar">
+                        <div class="progress-fill health-fill" id="health-fill"></div>
+                    </div>
+                    <span class="value" id="health-value">100%</span>
+                </div>
+                <div class="distance-container">
+                    <span>🏥 Distance to Hospital</span>
+                    <div class="progress-bar distance-bar">
+                        <div class="progress-fill distance-fill" id="distance-fill"></div>
+                    </div>
+                    <span class="value" id="distance-value">0m</span>
+                </div>
+                <div class="score-container">
+                    <span>⭐ Score</span>
+                    <span class="score-value" id="score-value">0</span>
+                </div>
+            </div>
+            <div class="canvas-container">
+                <canvas id="game-canvas" width="800" height="600"></canvas>
+            </div>
+            <div class="game-controls">
+                <p>⬅️ ➡️ Arrow keys or swipe to drive | Collect 🚀 Speed and ❤️ Health!</p>
+            </div>
+            <div class="power-up-indicators">
+                <div class="power-up-indicator" id="speed-indicator" style="display: none;">
+                    🚀 SPEED BOOST ACTIVE
+                </div>
+            </div>
+        </div>
+
+        <!-- Victory Screen -->
+        <div id="victory-screen" class="screen">
+            <div class="celebration">
+                <h2 class="victory-title">🎉 MISSION ACCOMPLISHED! 🎉</h2>
+            </div>
+            <div class="certificate">
+                <div class="certificate-border">
+                    <div class="certificate-header">
+                        <h2>🏆 CERTIFICATE OF AUTHENTICATION 🏆</h2>
+                    </div>
+                    <div class="certificate-content">
+                        <img src="assets/4.JPG" alt="Certificate Photo" class="cert-photo">
+                        <p class="cert-text">This certifies that</p>
+                        <h3 class="cert-name">YOU</h3>
+                        <p class="cert-text">are officially recognized as</p>
+                        <h2 class="cert-title">The Real Overthinking Saviour Doc</h2>
+                        <p class="cert-reason">For successfully saving the injured biker<br>with courage, speed, and medical expertise!<br><br>
+                        Final Score: <span id="final-score" class="score-highlight">0</span></p>
+                    </div>
+                    <div class="certificate-seal">
+                        <div class="seal">🎖️</div>
+                    </div>
+                </div>
+            </div>
+            <div class="valentine-message">
+                <h3>💝 A Special Valentine's Message 💝</h3>
+                <div class="message-card">
+                    <img src="assets/5.JPG" alt="Valentine" class="valentine-img">
+                    <div class="love-content">
+                        <p class="love-text" id="valentine-message">
+                            Wishing you a very Happy Valentine's Day! 💕<br><br>
+                            You are the real hero who saves lives every day.<br>
+                            Thank you for being the amazing person you are!<br>
+                            With love and admiration 💖
+                        </p>
+                        <div class="signature">
+                            <p>— Your Secret Valentine 💝</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="photo-gallery">
+                <h3>📸 Memories</h3>
+                <div class="gallery-grid">
+                    <img src="assets/6.JPG" alt="Memory 1" class="gallery-photo">
+                    <img src="assets/WhatsApp Image 2026-02-14 at 7.17.30 AM.jpeg" alt="Memory 2" class="gallery-photo">
+                    <img src="assets/WhatsApp Image 2026-02-14 at 7.17.31 AM.jpeg" alt="Memory 3" class="gallery-photo">
+                    <img src="assets/WhatsApp Image 2026-02-14 at 7.17.31 AM_.jpeg" alt="Memory 4" class="gallery-photo">
+                </div>
+            </div>
+            <button id="replay-btn" class="game-btn">Play Again 🎮</button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameover-screen" class="screen">
+            <h2 class="gameover-title">😢 The Patient Didn't Make It</h2>
+            <p class="gameover-text">You hit too many obstacles! Try again, Doctor!</p>
+            <img src="assets/3.JPG" alt="Try again" class="try-again-img">
+            <div class="final-score">
+                <p>Your Score: <span id="gameover-score">0</span></p>
+            </div>
+            <button id="retry-btn" class="game-btn">Try Again 🚑</button>
+        </div>
+    </div>
+
+    <!-- Particle Canvas for effects -->
+    <canvas id="particle-canvas" class="particle-canvas"></canvas>
+
+    <script src="game.js"></script>
+</body>
+</html>
