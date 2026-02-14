@@ -91,13 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
     typeText(introMessage, message, 40);
 });
 
-// Yes/No Buttons
+// Yes Button
 document.getElementById('yes-btn').addEventListener('click', () => {
     showScreen('authOverview');
-});
-
-document.getElementById('no-btn').addEventListener('click', () => {
-    alert('Access denied. Only authorized personnel may proceed.');
 });
 
 // Start Authentication
