@@ -25,9 +25,9 @@ const gameState = {
 
 // Cutscene dialogues
 const cutsceneDialogues = [
-    "Just another peaceful drive to the hospital... little did I know what was about to happen... 💭",
-    "💥 CRASH! 💥 Oh no! A bike came out of nowhere and hit my car! The rider is bleeding badly!",
-    "I must act fast! The injured biker needs immediate medical attention. Every second counts! 🚑💨"
+    "Just another peaceful drive to the hospital... little did I know what was about to happen.",
+    "CRASH! Oh no! A bike came out of nowhere and hit my car. The rider is bleeding badly.",
+    "I must act fast! The injured biker needs immediate medical attention. Every second counts."
 ];
 
 // DOM Elements
@@ -125,7 +125,7 @@ document.getElementById('continue-btn').addEventListener('click', () => {
         }
         
         if (gameState.cutsceneStep === 2) {
-            document.getElementById('continue-btn').textContent = 'Start Emergency Drive 🚑';
+            document.getElementById('continue-btn').textContent = 'Start Emergency Drive';
         }
     } else {
         startGame();
@@ -188,11 +188,11 @@ function updateUI() {
 function drawRoad() {
     const roadOffset = (Date.now() / 50) % 40;
     
-    ctx.fillStyle = '#555';
+    ctx.fillStyle = '#4A423C';
     ctx.fillRect(200, 0, 400, 600);
     
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 5;
+    ctx.strokeStyle = '#D4C8BE';
+    ctx.lineWidth = 4;
     ctx.setLineDash([30, 20]);
     ctx.lineDashOffset = -roadOffset;
     ctx.beginPath();
@@ -201,16 +201,16 @@ function drawRoad() {
     ctx.stroke();
     ctx.setLineDash([]);
     
-    ctx.fillStyle = '#4CAF50';
+    ctx.fillStyle = '#8B7F74';
     ctx.fillRect(0, 0, 200, 600);
     ctx.fillRect(600, 0, 200, 600);
     
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 24px Arial';
-    ctx.fillText('🏥 HOSPITAL', 630, 50);
+    ctx.fillStyle = '#F7F2EB';
+    ctx.font = 'bold 18px Georgia';
+    ctx.fillText('HOSPITAL', 630, 50);
     
-    ctx.font = '18px Arial';
-    ctx.fillStyle = '#333';
+    ctx.font = '15px Georgia';
+    ctx.fillStyle = '#6B6660';
     ctx.fillText(`${Math.round(gameState.maxDistance - gameState.distance)}m to go`, 630, 80);
 }
 
@@ -220,31 +220,31 @@ function drawAmbulance() {
     
     ctx.save();
     
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = '#F7F2EB';
     ctx.fillRect(x, y, 60, 90);
     
-    ctx.fillStyle = '#ff0000';
+    ctx.fillStyle = '#C45C26';
     ctx.fillRect(x + 22, 505, 16, 50);
     ctx.fillRect(x + 5, 525, 50, 12);
     
-    ctx.fillStyle = '#00ff00';
+    ctx.fillStyle = '#8F4219';
     ctx.fillRect(x + 10, y + 75, 40, 8);
-    ctx.fillStyle = '#ff0000';
+    ctx.fillStyle = '#B8860B';
     ctx.fillRect(x + 10, y + 83, 40, 8);
     
-    const sirenColor = Math.floor(Date.now() / 150) % 2 === 0 ? '#ff0000' : '#0000ff';
+    const sirenColor = Math.floor(Date.now() / 150) % 2 === 0 ? '#C45C26' : '#2D2A26';
     ctx.fillStyle = sirenColor;
     ctx.fillRect(x + 10, y - 5, 15, 10);
-    ctx.fillStyle = Math.floor(Date.now() / 150) % 2 === 0 ? '#0000ff' : '#ff0000';
+    ctx.fillStyle = Math.floor(Date.now() / 150) % 2 === 0 ? '#2D2A26' : '#C45C26';
     ctx.fillRect(x + 35, y - 5, 15, 10);
     
     if (Math.floor(Date.now() / 100) % 2 === 0) {
-        ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+        ctx.fillStyle = 'rgba(196, 92, 38, 0.2)';
         ctx.fillRect(x - 15, y - 10, 90, 110);
     }
     
     if (gameState.speedBoost) {
-        ctx.fillStyle = 'rgba(78, 205, 196, 0.5)';
+        ctx.fillStyle = 'rgba(184, 134, 11, 0.5)';
         ctx.beginPath();
         ctx.moveTo(x - 20, y + 45);
         ctx.lineTo(x - 40, y + 30);
@@ -268,45 +268,45 @@ function drawObstacles() {
         ctx.save();
         
         if (obs.type === 'rock') {
-            ctx.fillStyle = '#666';
+            ctx.fillStyle = '#6B6660';
             ctx.beginPath();
             ctx.arc(obs.x + 25, obs.y + 25, 25, 0, Math.PI * 2);
             ctx.fill();
             
-            ctx.fillStyle = '#888';
+            ctx.fillStyle = '#9A958D';
             ctx.beginPath();
             ctx.arc(obs.x + 20, obs.y + 20, 10, 0, Math.PI * 2);
             ctx.fill();
         } else if (obs.type === 'pothole') {
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = '#3D3A36';
             ctx.beginPath();
             ctx.ellipse(obs.x + 25, obs.y + 20, 30, 20, 0, 0, Math.PI * 2);
             ctx.fill();
             
-            ctx.fillStyle = '#222';
+            ctx.fillStyle = '#2D2A26';
             ctx.beginPath();
             ctx.ellipse(obs.x + 25, obs.y + 20, 25, 15, 0, 0, Math.PI * 2);
             ctx.fill();
         } else if (obs.type === 'traffic') {
-            ctx.fillStyle = '#444';
+            ctx.fillStyle = '#4A423C';
             ctx.fillRect(obs.x, obs.y, 45, 75);
             
-            ctx.fillStyle = '#87CEEB';
+            ctx.fillStyle = '#B8C8D0';
             ctx.fillRect(obs.x + 5, obs.y + 12, 35, 22);
             ctx.fillRect(obs.x + 5, obs.y + 42, 35, 18);
             
-            ctx.fillStyle = '#ff0000';
+            ctx.fillStyle = '#C45C26';
             ctx.fillRect(obs.x + 5, obs.y + 5, 10, 8);
-            ctx.fillStyle = '#ff9900';
+            ctx.fillStyle = '#B8860B';
             ctx.fillRect(obs.x + 18, obs.y + 5, 10, 8);
             
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = '#3D3A36';
             ctx.beginPath();
             ctx.arc(obs.x + 10, obs.y + 75, 8, 0, Math.PI * 2);
             ctx.arc(obs.x + 35, obs.y + 75, 8, 0, Math.PI * 2);
             ctx.fill();
             
-            ctx.fillStyle = '#222';
+            ctx.fillStyle = '#2D2A26';
             ctx.beginPath();
             ctx.arc(obs.x + 10, obs.y + 75, 5, 0, Math.PI * 2);
             ctx.arc(obs.x + 35, obs.y + 75, 5, 0, Math.PI * 2);
@@ -324,11 +324,31 @@ function drawPowerUps() {
         ctx.rotate(Date.now() / 500);
         
         if (pu.type === 'speed') {
-            ctx.font = '40px Arial';
-            ctx.fillText('🚀', -20, 15);
+            ctx.fillStyle = '#B8860B';
+            ctx.beginPath();
+            ctx.moveTo(0, -15);
+            ctx.lineTo(10, 5);
+            ctx.lineTo(0, 0);
+            ctx.lineTo(-10, 5);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.fillStyle = '#F7F2EB';
+            ctx.font = 'bold 14px Georgia';
+            ctx.fillText('SPEED', -22, 22);
         } else if (pu.type === 'health') {
-            ctx.font = '40px Arial';
-            ctx.fillText('❤️', -20, 15);
+            ctx.fillStyle = '#C45C26';
+            ctx.beginPath();
+            ctx.arc(0, 0, 12, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#F7F2EB';
+            ctx.fillRect(-4, -8, 8, 16);
+            ctx.fillRect(-8, -4, 16, 8);
+            
+            ctx.fillStyle = '#F7F2EB';
+            ctx.font = 'bold 14px Georgia';
+            ctx.fillText('HEALTH', -24, 22);
         }
         
         ctx.restore();
@@ -410,9 +430,9 @@ function updateGame() {
             gameState.health -= 20;
             gameState.obstacles.splice(index, 1);
             
-            createParticles(gameState.carX + 30, 500, '#ff0000', 15);
+            createParticles(gameState.carX + 30, 500, '#C45C26', 15);
             
-            ctx.fillStyle = 'rgba(255, 0, 0, 0.4)';
+            ctx.fillStyle = 'rgba(196, 92, 38, 0.2)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
     });
@@ -429,7 +449,7 @@ function updateGame() {
             }
             
             gameState.score += 50;
-            createParticles(pu.x + 20, pu.y + 20, pu.type === 'speed' ? '#4ecdc4' : '#ff6b6b', 10);
+            createParticles(pu.x + 20, pu.y + 20, pu.type === 'speed' ? '#B8860B' : '#C45C26', 10);
             gameState.powerUps.splice(index, 1);
         }
     });
@@ -608,7 +628,7 @@ document.addEventListener('touchend', () => {
 
 // Confetti for victory
 function createConfetti() {
-    const colors = ['#ff6b6b', '#4ecdc4', '#ffd700', '#ff6b9d', '#764ba2', '#feca57'];
+    const colors = ['#C45C26', '#B8860B', '#8F4219', '#D4A056', '#9A7209', '#2D2A26'];
     const confettiCount = 150;
     
     for (let i = 0; i < confettiCount; i++) {
@@ -662,5 +682,5 @@ document.querySelectorAll('.progress-dots .dot').forEach(dot => {
     });
 });
 
-console.log('🚗 The Overthinking Saviour - Game Loaded!');
-console.log('💕 Happy Valentine\'s Day!');
+console.log('The Overthinking Saviour - Game Loaded');
+console.log('Happy Valentine\'s Day');
