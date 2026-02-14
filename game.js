@@ -36,6 +36,10 @@ const screens = {
     gameover: document.getElementById('gameover-screen')
 };
 
+const countdownElement = document.getElementById('countdown');
+let destructTimer = null;
+let countdownValue = 10;
+
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
 const particleCanvas = document.getElementById('particle-canvas');
@@ -65,6 +69,114 @@ function showScreen(screenName) {
     }
     
     gameState.screen = screenName;
+    
+    // Start countdown on mystery screen
+    if (screenName === 'mystery') {
+        startSelfDestruct();
+    } else {
+        stopSelfDestruct();
+    }
+}
+
+// Self-Destruct Timer
+function startSelfDestruct() {
+    countdownValue = 10;
+    countdownElement.textContent = countdownValue;
+    
+    destructTimer = setInterval(() => {
+        countdownValue--;
+        countdownElement.textContent = countdownValue;
+        
+        // Flash red when less than 3 seconds
+        if (countdownValue <= 3) {
+            countdownElement.classList.add('urgent');
+        }
+        
+        if (countdownValue <= 0) {
+            triggerSelfDestruct();
+        }
+    }, 1000);
+}
+
+function stopSelfDestruct() {
+    if (destructTimer) {
+        clearInterval(destructTimer);
+        destructTimer = null;
+    }
+    countdownElement.classList.remove('urgent');
+}
+
+function triggerSelfDestruct() {
+    stopSelfDestruct();
+    
+    // Create explosion effect
+    createExplosion();
+    
+    // Flash screen
+    document.body.style.animation = 'flashWhite 0.5s';
+    setTimeout(() => {
+        document.body.style.animation = '';
+    }, 500);
+    
+    // Show destructed message
+    const messageBody = document.querySelector('.message-body');
+    if (messageBody) {
+        messageBody.innerHTML = `
+            <div class="destructed-message">
+                <h3>⚠ MESSAGE SELF-DESTRUCTED ⚠</h3>
+                <p>This message has been automatically destroyed.</p>
+                <p>Access terminated.</p>
+                <div class="terminate-stamp">TERMINATED</div>
+            </div>
+        `;
+    }
+    
+    // Add CSS for flash animation if not exists
+    if (!document.getElementById('destruct-styles')) {
+        const style = document.createElement('style');
+        style.id = 'destruct-styles';
+        style.textContent = `
+            @keyframes flashWhite {
+                0%, 100% { background: var(--bg-dark); }
+                50% { background: #FFFFFF; }
+            }
+            .destructed-message {
+                text-align: center;
+                padding: 60px 20px;
+                animation: shake 0.5s ease-in-out;
+            }
+            .destructed-message h3 {
+                color: var(--primary-red);
+                font-size: 1.8em;
+                margin-bottom: 24px;
+                text-shadow: 0 0 20px var(--glow-red);
+            }
+            .destructed-message p {
+                color: var(--text-dim);
+                font-size: 1.1em;
+                margin-bottom: 16px;
+            }
+            .terminate-stamp {
+                font-family: 'Orbitron', sans-serif;
+                font-size: 1.2em;
+                font-weight: 700;
+                letter-spacing: 0.2em;
+                padding: 12px 32px;
+                border: 3px solid var(--primary-red);
+                color: var(--primary-red);
+                transform: rotate(-5deg);
+                margin-top: 32px;
+                display: inline-block;
+                text-shadow: 0 0 20px var(--glow-red);
+            }
+            .timer-value.urgent {
+                color: #FF0000;
+                animation: blink 0.5s infinite;
+                text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+            }
+        `;
+        document.head.appendChild(style);
+    }
 }
 
 // Typing Effect
@@ -692,6 +804,42 @@ function createConfetti() {
     }
 }
 
+// Explosion Effect
+function createExplosion() {
+    const colors = ['#FF0000', '#FF6600', '#FFCC00', '#FF3300'];
+    const particleCount = 50;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.style.position = 'fixed';
+        particle.style.left = '50%';
+        particle.style.top = '50%';
+        particle.style.width = Math.random() * 15 + 5 + 'px';
+        particle.style.height = Math.random() * 15 + 5 + 'px';
+        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        particle.style.zIndex = '1000';
+        particle.style.pointerEvents = 'none';
+        
+        const angle = (Math.PI * 2 / particleCount) * i;
+        const velocity = Math.random() * 300 + 100;
+        const tx = Math.cos(angle) * velocity;
+        const ty = Math.sin(angle) * velocity;
+        
+        particle.style.transition = 'all 0.8s ease-out';
+        document.body.appendChild(particle);
+        
+        setTimeout(() => {
+            particle.style.transform = `translate(${tx}px, ${ty}px) scale(0)`;
+            particle.style.opacity = '0';
+        }, 10);
+        
+        setTimeout(() => {
+            particle.remove();
+        }, 1000);
+    }
+}
+
 // Reveal mystery message button
 document.getElementById('reveal-btn').addEventListener('click', () => {
     showScreen('mystery');
@@ -705,8 +853,31 @@ document.getElementById('retry-btn').addEventListener('click', () => {
 });
 
 document.getElementById('restart-btn').addEventListener('click', () => {
+    stopSelfDestruct();
     resetLieDetector();
     gameState.lieDetectorAttempts = 0;
+    countdownValue = 10;
+    countdownElement.textContent = countdownValue;
+    countdownElement.classList.remove('urgent');
+    
+    // Reset message body
+    const messageBody = document.querySelector('.message-body');
+    if (messageBody) {
+        messageBody.innerHTML = `
+            <p class="salutation">My Dearest Dr. Overthinker,</p>
+            <p class="love-text">
+                                "Bismil ka sandesh hai ki Lucknow se Lahore Jane Wali train, jisme angrezo ka paisa hai, use hum kakori station mai lootenge."
+                            </p>
+                            <p class="love-text">
+                                Also - Kudos on completing the missions. 
+                            </p>
+                            <p class="love-text">
+                                Here's to hoping that Valentine's 2026 is a blast and brainstorming continues.
+                            </p>
+                            <p class="closing">Fellow Brainstormer</p>
+        `;
+    }
+    
     showScreen('intro');
     const introMessage = document.getElementById('intro-message');
     const message = "This is a super encrypted mystery message for one doc.";

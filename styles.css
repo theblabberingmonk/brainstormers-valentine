@@ -792,6 +792,45 @@ h1, h2, h3, h4 {
 
 .mystery-content {
     margin-top: 32px;
+    position: relative;
+}
+
+.self-destruct-timer {
+    background: rgba(204, 0, 0, 0.1);
+    border: 2px solid var(--primary-red);
+    padding: 20px 40px;
+    margin-bottom: 32px;
+    display: inline-block;
+    animation: pulse 2s infinite;
+}
+
+.timer-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-right: 16px;
+}
+
+.timer-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3em;
+    font-weight: 700;
+    color: var(--primary-red);
+    text-shadow: 0 0 20px var(--glow-red);
+    display: inline-block;
+    min-width: 80px;
+    transition: all 0.3s;
+}
+
+.timer-unit {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-left: 16px;
 }
 
 .mystery-content h2 {
