@@ -330,19 +330,46 @@ function updateUI() {
 function drawRoad() {
     const roadOffset = (Date.now() / 50) % 40;
     
-    // Dark road
+    // Grass/side areas
     ctx.fillStyle = '#0A0A0A';
+    ctx.fillRect(0, 0, 200, 600);
+    ctx.fillRect(600, 0, 200, 600);
+    
+    // Road surface
+    ctx.fillStyle = '#141414';
     ctx.fillRect(200, 0, 400, 600);
     
-    // Road edges
-    ctx.fillStyle = '#1A1A1A';
-    ctx.fillRect(190, 0, 10, 600);
-    ctx.fillRect(600, 0, 10, 600);
+    // Left boundary line (thick, visible red)
+    ctx.strokeStyle = '#CC0000';
+    ctx.lineWidth = 6;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(200, 0);
+    ctx.lineTo(200, 600);
+    ctx.stroke();
     
-    // Dashed center line
+    // Right boundary line (thick, visible red)
+    ctx.beginPath();
+    ctx.moveTo(600, 0);
+    ctx.lineTo(600, 600);
+    ctx.stroke();
+    
+    // Inner glow for boundaries
+    ctx.strokeStyle = 'rgba(204, 0, 0, 0.3)';
+    ctx.lineWidth = 12;
+    ctx.beginPath();
+    ctx.moveTo(200, 0);
+    ctx.lineTo(200, 600);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(600, 0);
+    ctx.lineTo(600, 600);
+    ctx.stroke();
+    
+    // Dashed center line (green)
     ctx.strokeStyle = '#00FF00';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([30, 20]);
+    ctx.lineWidth = 3;
+    ctx.setLineDash([40, 25]);
     ctx.lineDashOffset = -roadOffset;
     ctx.beginPath();
     ctx.moveTo(400, 0);
@@ -350,19 +377,50 @@ function drawRoad() {
     ctx.stroke();
     ctx.setLineDash([]);
     
-    // Side areas
-    ctx.fillStyle = '#0A0A0A';
-    ctx.fillRect(0, 0, 200, 600);
-    ctx.fillRect(600, 0, 200, 600);
+    // Add road texture/lines
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    ctx.lineWidth = 1;
+    for (let y = 0; y < 600; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(220, y);
+        ctx.lineTo(220, y + 20);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(580, y);
+        ctx.lineTo(580, y + 20);
+        ctx.stroke();
+    }
     
-    // Hospital text
+    // Road hazard zones (diagonal warning stripes at edges)
+    ctx.strokeStyle = 'rgba(204, 0, 0, 0.2)';
+    ctx.lineWidth = 8;
+    ctx.setLineDash([10, 10]);
+    ctx.lineDashOffset = -Date.now() / 20;
+    ctx.beginPath();
+    ctx.moveTo(180, 0);
+    ctx.lineTo(200, 0);
+    ctx.lineTo(200, 600);
+    ctx.lineTo(180, 600);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(620, 0);
+    ctx.lineTo(600, 0);
+    ctx.lineTo(600, 600);
+    ctx.lineTo(620, 600);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Hospital text with glow
+    ctx.shadowColor = '#CC0000';
+    ctx.shadowBlur = 10;
     ctx.fillStyle = '#CC0000';
-    ctx.font = 'bold 16px Orbitron';
-    ctx.fillText('HOSPITAL', 630, 50);
+    ctx.font = 'bold 20px Orbitron';
+    ctx.fillText('HOSPITAL', 620, 50);
+    ctx.shadowBlur = 0;
     
     ctx.font = '14px Orbitron';
     ctx.fillStyle = '#888888';
-    ctx.fillText(`${Math.round(gameState.maxDistance - gameState.distance)}m TO GO`, 630, 80);
+    ctx.fillText(`${Math.round(gameState.maxDistance - gameState.distance)}m TO GO`, 620, 80);
 }
 
 function drawAmbulance() {
@@ -371,49 +429,71 @@ function drawAmbulance() {
     
     ctx.save();
     
+    // Ambulance shadow/glow
+    ctx.fillStyle = 'rgba(204, 0, 0, 0.3)';
+    ctx.fillRect(x - 5, y - 5, 70, 100);
+    
     // Ambulance body
     ctx.fillStyle = '#CC0000';
     ctx.fillRect(x, y, 60, 90);
     
-    // Cross on ambulance
+    // White cross on ambulance
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(x + 22, 505, 16, 50);
     ctx.fillRect(x + 5, 525, 50, 12);
     
-    // Windows
+    // Windows with reflection
     ctx.fillStyle = '#1A1A1A';
     ctx.fillRect(x + 10, y + 75, 40, 8);
     
-    // Siren lights
-    const sirenColor = Math.floor(Date.now() / 150) % 2 === 0 ? '#FF0000' : '#0000FF';
-    ctx.fillStyle = sirenColor;
-    ctx.fillRect(x + 10, y - 5, 15, 10);
-    ctx.fillStyle = Math.floor(Date.now() / 150) % 2 === 0 ? '#0000FF' : '#FF0000';
-    ctx.fillRect(x + 35, y - 5, 15, 10);
+    // Window shine
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.fillRect(x + 12, y + 77, 15, 4);
     
-    // Siren glow
-    if (Math.floor(Date.now() / 100) % 2 === 0) {
-        ctx.fillStyle = 'rgba(204, 0, 0, 0.3)';
-        ctx.fillRect(x - 15, y - 10, 90, 110);
+    // Siren lights with glow effect
+    const sirenColor = Math.floor(Date.now() / 150) % 2 === 0 ? '#FF0000' : '#0088FF';
+    
+    ctx.shadowColor = sirenColor;
+    ctx.shadowBlur = 15;
+    ctx.fillStyle = sirenColor;
+    ctx.fillRect(x + 10, y - 8, 15, 12);
+    
+    ctx.fillStyle = Math.floor(Date.now() / 150) % 2 === 0 ? '#0088FF' : '#FF0000';
+    ctx.fillRect(x + 35, y - 8, 15, 12);
+    ctx.shadowBlur = 0;
+    
+    // Siren ambient glow
+    if (Math.floor(Date.now() / 80) % 2 === 0) {
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.2)';
+        ctx.fillRect(x - 15, y - 15, 90, 120);
     }
     
     // Speed boost effect
     if (gameState.speedBoost) {
-        ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+        ctx.fillStyle = 'rgba(0, 255, 0, 0.6)';
+        ctx.shadowColor = '#00FF00';
+        ctx.shadowBlur = 20;
+        
         ctx.beginPath();
         ctx.moveTo(x - 20, y + 45);
-        ctx.lineTo(x - 40, y + 30);
-        ctx.lineTo(x - 40, y + 60);
+        ctx.lineTo(x - 50, y + 20);
+        ctx.lineTo(x - 50, y + 70);
         ctx.closePath();
         ctx.fill();
         
         ctx.beginPath();
         ctx.moveTo(x + 80, y + 45);
-        ctx.lineTo(x + 100, y + 30);
-        ctx.lineTo(x + 100, y + 60);
+        ctx.lineTo(x + 110, y + 20);
+        ctx.lineTo(x + 110, y + 70);
         ctx.closePath();
         ctx.fill();
+        ctx.shadowBlur = 0;
     }
+    
+    // Add ambulance border for visibility
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, 60, 90);
     
     ctx.restore();
 }
@@ -545,6 +625,52 @@ function drawParticles() {
     });
 }
 
+// Draw mobile touch controls
+function drawMobileControls() {
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    if (isTouchDevice) {
+        // Left control zone
+        ctx.fillStyle = 'rgba(204, 0, 0, 0.3)';
+        ctx.fillRect(50, 450, 100, 100);
+        ctx.strokeStyle = '#CC0000';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(50, 450, 100, 100);
+        
+        ctx.fillStyle = '#CC0000';
+        ctx.font = 'bold 24px Orbitron';
+        ctx.textAlign = 'center';
+        ctx.fillText('←', 100, 515);
+        
+        // Right control zone
+        ctx.fillStyle = 'rgba(204, 0, 0, 0.3)';
+        ctx.fillRect(650, 450, 100, 100);
+        ctx.strokeStyle = '#CC0000';
+        ctx.strokeRect(650, 450, 100, 100);
+        
+        ctx.fillStyle = '#CC0000';
+        ctx.fillText('→', 700, 515);
+        
+        // Active indicator
+        if (gameState.keys.left) {
+            ctx.fillStyle = 'rgba(0, 255, 0, 0.4)';
+            ctx.fillRect(50, 450, 100, 100);
+        }
+        if (gameState.keys.right) {
+            ctx.fillStyle = 'rgba(0, 255, 0, 0.4)';
+            ctx.fillRect(650, 450, 100, 100);
+        }
+        
+        // Control hint text
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.font = '12px Orbitron';
+        ctx.textAlign = 'center';
+        ctx.fillText('TAP ZONES TO STEER', 400, 520);
+        
+        ctx.textAlign = 'left';
+    }
+}
+
 function updateGame() {
     if (!gameState.isPlaying) return;
     
@@ -627,6 +753,7 @@ function updateGame() {
     drawPowerUps();
     drawParticles();
     drawAmbulance();
+    drawMobileControls();
     
     if (gameState.health <= 0) {
         endGame(false);
@@ -736,17 +863,17 @@ function endGame(won) {
 document.addEventListener('keydown', (e) => {
     if (!gameState.isPlaying) return;
     
-    if (e.key === 'ArrowLeft') {
+    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
         gameState.keys.left = true;
-    } else if (e.key === 'ArrowRight') {
+    } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
         gameState.keys.right = true;
     }
 });
 
 document.addEventListener('keyup', (e) => {
-    if (e.key === 'ArrowLeft') {
+    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
         gameState.keys.left = false;
-    } else if (e.key === 'ArrowRight') {
+    } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
         gameState.keys.right = false;
     }
 });
@@ -756,28 +883,43 @@ let touchStartX = 0;
 
 document.addEventListener('touchstart', (e) => {
     if (!gameState.isPlaying) return;
-    touchStartX = e.touches[0].clientX;
+    
+    const touch = e.touches[0];
+    const screenWidth = window.innerWidth;
+    
+    // Direct tap control zones
+    if (touch.clientX < screenWidth * 0.3) {
+        // Left zone tapped
+        gameState.keys.left = true;
+        gameState.keys.right = false;
+    } else if (touch.clientX > screenWidth * 0.7) {
+        // Right zone tapped
+        gameState.keys.right = true;
+        gameState.keys.left = false;
+    } else {
+        // Middle area - use swipe
+        touchStartX = touch.clientX;
+    }
 });
 
 document.addEventListener('touchmove', (e) => {
     if (!gameState.isPlaying) return;
+    e.preventDefault();
     
-    const touchX = e.touches[0].clientX;
-    const diff = touchX - touchStartX;
+    const touch = e.touches[0];
+    const screenWidth = window.innerWidth;
     
-    if (Math.abs(diff) > 20) {
-        if (diff > 0) {
-            gameState.keys.right = true;
-            gameState.keys.left = false;
-        } else {
-            gameState.keys.left = true;
-            gameState.keys.right = false;
-        }
-        touchStartX = touchX;
+    // Direct control while touching
+    if (touch.clientX < screenWidth * 0.3) {
+        gameState.keys.left = true;
+        gameState.keys.right = false;
+    } else if (touch.clientX > screenWidth * 0.7) {
+        gameState.keys.right = true;
+        gameState.keys.left = false;
     }
-});
+}, { passive: false });
 
-document.addEventListener('touchend', () => {
+document.addEventListener('touchend', (e) => {
     gameState.keys.left = false;
     gameState.keys.right = false;
 });

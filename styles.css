@@ -699,6 +699,38 @@ h1, h2, h3, h4 {
     justify-content: center;
 }
 
+.controls-hint {
+    margin-top: 12px;
+    padding: 12px 20px;
+    background: rgba(0, 255, 0, 0.05);
+    border: 1px solid rgba(0, 255, 0, 0.2);
+    font-size: 0.8em;
+    color: var(--text-dim);
+}
+
+.controls-hint p {
+    margin: 4px 0;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.05em;
+}
+
+.desktop-controls {
+    display: block;
+}
+
+.mobile-controls {
+    display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .desktop-controls {
+        display: none;
+    }
+    .mobile-controls {
+        display: block;
+    }
+}
+
 .power-up-indicator {
     font-family: 'Orbitron', sans-serif;
     font-size: 0.75em;
