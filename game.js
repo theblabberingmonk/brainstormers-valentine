@@ -1,7 +1,6 @@
 // Game State
 const gameState = {
-    screen: 'start',
-    cutsceneStep: 0,
+    screen: 'intro',
     isPlaying: false,
     health: 100,
     distance: 0,
@@ -20,22 +19,20 @@ const gameState = {
     obstacleTimer: null,
     powerUpTimer: null,
     keys: { left: false, right: false },
-    animationFrameId: null
+    animationFrameId: null,
+    lieDetectorAttempts: 0,
+    maxLieDetectorAttempts: 3
 };
-
-// Cutscene dialogues
-const cutsceneDialogues = [
-    "Just another peaceful drive to the hospital... little did I know what was about to happen.",
-    "CRASH! Oh no! A bike came out of nowhere and hit my car. The rider is bleeding badly.",
-    "I must act fast! The injured biker needs immediate medical attention. Every second counts."
-];
 
 // DOM Elements
 const screens = {
-    start: document.getElementById('start-screen'),
-    cutscene: document.getElementById('cutscene-screen'),
+    intro: document.getElementById('intro-screen'),
+    authOverview: document.getElementById('auth-overview-screen'),
+    lieDetector: document.getElementById('lie-detector-screen'),
+    skillsIntro: document.getElementById('skills-intro-screen'),
     game: document.getElementById('game-screen'),
-    victory: document.getElementById('victory-screen'),
+    success: document.getElementById('success-screen'),
+    mystery: document.getElementById('mystery-screen'),
     gameover: document.getElementById('gameover-screen')
 };
 
@@ -55,18 +52,26 @@ window.addEventListener('resize', resizeParticleCanvas);
 // Screen Navigation
 function showScreen(screenName) {
     Object.values(screens).forEach(screen => {
-        screen.classList.remove('active');
-        screen.style.display = 'none';
+        if (screen) {
+            screen.classList.remove('active');
+            screen.style.display = 'none';
+        }
     });
-    screens[screenName].style.display = 'block';
-    setTimeout(() => screens[screenName].classList.add('active'), 10);
+    
+    const targetScreen = screens[screenName];
+    if (targetScreen) {
+        targetScreen.style.display = 'block';
+        setTimeout(() => targetScreen.classList.add('active'), 10);
+    }
+    
     gameState.screen = screenName;
 }
 
-// Typing effect for dialogues
+// Typing Effect
 function typeText(element, text, speed = 30, callback) {
     element.textContent = '';
     let i = 0;
+    
     function type() {
         if (i < text.length) {
             element.textContent += text.charAt(i);
@@ -79,65 +84,92 @@ function typeText(element, text, speed = 30, callback) {
     type();
 }
 
-// Start Button
-document.getElementById('start-btn').addEventListener('click', () => {
-    showScreen('cutscene');
-    startCutscene();
+// Intro Screen Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const introMessage = document.getElementById('intro-message');
+    const message = "This is a super encrypted mystery message for one doc.";
+    typeText(introMessage, message, 40);
 });
 
-// Cutscene Logic
-function startCutscene() {
-    gameState.cutsceneStep = 0;
-    const scenes = document.querySelectorAll('.cutscene-container .scene');
-    scenes.forEach(scene => scene.classList.add('hidden'));
-    scenes[0].classList.remove('hidden');
-    
-    updateProgressDots(0);
-    
-    const dialogueElement = document.getElementById(`dialogue-0`);
-    typeText(dialogueElement, cutsceneDialogues[0], 40);
-}
+// Yes/No Buttons
+document.getElementById('yes-btn').addEventListener('click', () => {
+    showScreen('authOverview');
+});
 
-function updateProgressDots(currentScene) {
-    const dots = document.querySelectorAll('.progress-dots .dot');
-    dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index <= currentScene);
+document.getElementById('no-btn').addEventListener('click', () => {
+    alert('Access denied. Only authorized personnel may proceed.');
+});
+
+// Start Authentication
+document.getElementById('start-auth-btn').addEventListener('click', () => {
+    showScreen('lieDetector');
+});
+
+// Lie Detector Logic
+const optionButtons = document.querySelectorAll('.option-btn');
+const feedbackElement = document.getElementById('detector-feedback');
+
+optionButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const answer = e.target.dataset.answer;
+        
+        if (answer === 'C') {
+            // Correct answer
+            e.target.classList.add('correct');
+            feedbackElement.textContent = 'IDENTITY VERIFIED - MEMORY AUTHENTICATION PASSED';
+            feedbackElement.classList.add('success');
+            
+            // Disable all buttons
+            optionButtons.forEach(button => {
+                button.disabled = true;
+                if (button !== e.target) {
+                    button.style.opacity = '0.3';
+                }
+            });
+            
+            // Show success animation
+            setTimeout(() => {
+                showScreen('skillsIntro');
+                gameState.lieDetectorAttempts = 0;
+                resetLieDetector();
+            }, 2000);
+        } else {
+            // Wrong answer
+            gameState.lieDetectorAttempts++;
+            e.target.classList.add('incorrect');
+            feedbackElement.textContent = `LIE DETECTED - INCORRECT ANSWER. ATTEMPTS REMAINING: ${gameState.maxLieDetectorAttempts - gameState.lieDetectorAttempts}`;
+            feedbackElement.classList.add('error');
+            
+            // Remove incorrect class after animation
+            setTimeout(() => {
+                e.target.classList.remove('incorrect');
+            }, 500);
+            
+            if (gameState.lieDetectorAttempts >= gameState.maxLieDetectorAttempts) {
+                feedbackElement.textContent = 'TOO MANY FAILED ATTEMPTS. AUTHENTICATION FAILED.';
+                setTimeout(() => {
+                    alert('Authentication failed. Please try again later.');
+                    location.reload();
+                }, 2000);
+            }
+        }
     });
-}
-
-document.getElementById('continue-btn').addEventListener('click', () => {
-    if (gameState.cutsceneStep < 2) {
-        const currentScene = document.getElementById(`scene-${gameState.cutsceneStep}`);
-        const nextScene = document.getElementById(`scene-${gameState.cutsceneStep + 1}`);
-        
-        currentScene.classList.add('hidden');
-        nextScene.classList.remove('hidden');
-        
-        gameState.cutsceneStep++;
-        
-        updateProgressDots(gameState.cutsceneStep);
-        
-        const dialogueElement = document.getElementById(`dialogue-${gameState.cutsceneStep}`);
-        typeText(dialogueElement, cutsceneDialogues[gameState.cutsceneStep], 40);
-        
-        if (gameState.cutsceneStep === 1) {
-            triggerScreenShake();
-        }
-        
-        if (gameState.cutsceneStep === 2) {
-            document.getElementById('continue-btn').textContent = 'Start Emergency Drive';
-        }
-    } else {
-        startGame();
-    }
 });
 
-function triggerScreenShake() {
-    document.body.style.animation = 'shake 0.5s ease-in-out';
-    setTimeout(() => {
-        document.body.style.animation = '';
-    }, 500);
+function resetLieDetector() {
+    optionButtons.forEach(btn => {
+        btn.classList.remove('correct', 'incorrect');
+        btn.disabled = false;
+        btn.style.opacity = '1';
+    });
+    feedbackElement.textContent = '';
+    feedbackElement.classList.remove('success', 'error');
 }
+
+// Start Game Button
+document.getElementById('start-game-btn').addEventListener('click', () => {
+    startGame();
+});
 
 // Game Logic
 function startGame() {
@@ -163,16 +195,13 @@ function startGame() {
 
 function updateUI() {
     const healthFill = document.getElementById('health-fill');
-    const distanceFill = document.getElementById('distance-fill');
     const healthValue = document.getElementById('health-value');
     const distanceValue = document.getElementById('distance-value');
     const scoreValue = document.getElementById('score-value');
     
     healthFill.style.width = `${gameState.health}%`;
-    const distancePercent = Math.min((gameState.distance / gameState.maxDistance) * 100, 100);
-    distanceFill.style.width = `${distancePercent}%`;
     healthValue.textContent = `${Math.round(gameState.health)}%`;
-    distanceValue.textContent = `${Math.round(gameState.distance)}m`;
+    distanceValue.textContent = `${Math.round(gameState.distance)}`;
     scoreValue.textContent = gameState.score;
     
     // Speed boost indicator
@@ -188,11 +217,18 @@ function updateUI() {
 function drawRoad() {
     const roadOffset = (Date.now() / 50) % 40;
     
-    ctx.fillStyle = '#4A423C';
+    // Dark road
+    ctx.fillStyle = '#0A0A0A';
     ctx.fillRect(200, 0, 400, 600);
     
-    ctx.strokeStyle = '#D4C8BE';
-    ctx.lineWidth = 4;
+    // Road edges
+    ctx.fillStyle = '#1A1A1A';
+    ctx.fillRect(190, 0, 10, 600);
+    ctx.fillRect(600, 0, 10, 600);
+    
+    // Dashed center line
+    ctx.strokeStyle = '#00FF00';
+    ctx.lineWidth = 2;
     ctx.setLineDash([30, 20]);
     ctx.lineDashOffset = -roadOffset;
     ctx.beginPath();
@@ -201,17 +237,19 @@ function drawRoad() {
     ctx.stroke();
     ctx.setLineDash([]);
     
-    ctx.fillStyle = '#8B7F74';
+    // Side areas
+    ctx.fillStyle = '#0A0A0A';
     ctx.fillRect(0, 0, 200, 600);
     ctx.fillRect(600, 0, 200, 600);
     
-    ctx.fillStyle = '#F7F2EB';
-    ctx.font = 'bold 18px Georgia';
+    // Hospital text
+    ctx.fillStyle = '#CC0000';
+    ctx.font = 'bold 16px Orbitron';
     ctx.fillText('HOSPITAL', 630, 50);
     
-    ctx.font = '15px Georgia';
-    ctx.fillStyle = '#6B6660';
-    ctx.fillText(`${Math.round(gameState.maxDistance - gameState.distance)}m to go`, 630, 80);
+    ctx.font = '14px Orbitron';
+    ctx.fillStyle = '#888888';
+    ctx.fillText(`${Math.round(gameState.maxDistance - gameState.distance)}m TO GO`, 630, 80);
 }
 
 function drawAmbulance() {
@@ -220,31 +258,35 @@ function drawAmbulance() {
     
     ctx.save();
     
-    ctx.fillStyle = '#F7F2EB';
+    // Ambulance body
+    ctx.fillStyle = '#CC0000';
     ctx.fillRect(x, y, 60, 90);
     
-    ctx.fillStyle = '#C45C26';
+    // Cross on ambulance
+    ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(x + 22, 505, 16, 50);
     ctx.fillRect(x + 5, 525, 50, 12);
     
-    ctx.fillStyle = '#8F4219';
+    // Windows
+    ctx.fillStyle = '#1A1A1A';
     ctx.fillRect(x + 10, y + 75, 40, 8);
-    ctx.fillStyle = '#B8860B';
-    ctx.fillRect(x + 10, y + 83, 40, 8);
     
-    const sirenColor = Math.floor(Date.now() / 150) % 2 === 0 ? '#C45C26' : '#2D2A26';
+    // Siren lights
+    const sirenColor = Math.floor(Date.now() / 150) % 2 === 0 ? '#FF0000' : '#0000FF';
     ctx.fillStyle = sirenColor;
     ctx.fillRect(x + 10, y - 5, 15, 10);
-    ctx.fillStyle = Math.floor(Date.now() / 150) % 2 === 0 ? '#2D2A26' : '#C45C26';
+    ctx.fillStyle = Math.floor(Date.now() / 150) % 2 === 0 ? '#0000FF' : '#FF0000';
     ctx.fillRect(x + 35, y - 5, 15, 10);
     
+    // Siren glow
     if (Math.floor(Date.now() / 100) % 2 === 0) {
-        ctx.fillStyle = 'rgba(196, 92, 38, 0.2)';
+        ctx.fillStyle = 'rgba(204, 0, 0, 0.3)';
         ctx.fillRect(x - 15, y - 10, 90, 110);
     }
     
+    // Speed boost effect
     if (gameState.speedBoost) {
-        ctx.fillStyle = 'rgba(184, 134, 11, 0.5)';
+        ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
         ctx.beginPath();
         ctx.moveTo(x - 20, y + 45);
         ctx.lineTo(x - 40, y + 30);
@@ -268,45 +310,46 @@ function drawObstacles() {
         ctx.save();
         
         if (obs.type === 'rock') {
-            ctx.fillStyle = '#6B6660';
+            ctx.fillStyle = '#333333';
             ctx.beginPath();
             ctx.arc(obs.x + 25, obs.y + 25, 25, 0, Math.PI * 2);
             ctx.fill();
             
-            ctx.fillStyle = '#9A958D';
+            ctx.fillStyle = '#555555';
             ctx.beginPath();
             ctx.arc(obs.x + 20, obs.y + 20, 10, 0, Math.PI * 2);
             ctx.fill();
         } else if (obs.type === 'pothole') {
-            ctx.fillStyle = '#3D3A36';
+            ctx.fillStyle = '#1A1A1A';
             ctx.beginPath();
             ctx.ellipse(obs.x + 25, obs.y + 20, 30, 20, 0, 0, Math.PI * 2);
             ctx.fill();
             
-            ctx.fillStyle = '#2D2A26';
+            ctx.fillStyle = '#0A0A0A';
             ctx.beginPath();
             ctx.ellipse(obs.x + 25, obs.y + 20, 25, 15, 0, 0, Math.PI * 2);
             ctx.fill();
         } else if (obs.type === 'traffic') {
-            ctx.fillStyle = '#4A423C';
+            ctx.fillStyle = '#1A1A1A';
             ctx.fillRect(obs.x, obs.y, 45, 75);
             
-            ctx.fillStyle = '#B8C8D0';
+            ctx.fillStyle = '#4A4A4A';
             ctx.fillRect(obs.x + 5, obs.y + 12, 35, 22);
             ctx.fillRect(obs.x + 5, obs.y + 42, 35, 18);
             
-            ctx.fillStyle = '#C45C26';
+            ctx.fillStyle = '#CC0000';
             ctx.fillRect(obs.x + 5, obs.y + 5, 10, 8);
-            ctx.fillStyle = '#B8860B';
+            ctx.fillStyle = '#FFCC00';
             ctx.fillRect(obs.x + 18, obs.y + 5, 10, 8);
             
-            ctx.fillStyle = '#3D3A36';
+            // Wheels
+            ctx.fillStyle = '#1A1A1A';
             ctx.beginPath();
             ctx.arc(obs.x + 10, obs.y + 75, 8, 0, Math.PI * 2);
             ctx.arc(obs.x + 35, obs.y + 75, 8, 0, Math.PI * 2);
             ctx.fill();
             
-            ctx.fillStyle = '#2D2A26';
+            ctx.fillStyle = '#0A0A0A';
             ctx.beginPath();
             ctx.arc(obs.x + 10, obs.y + 75, 5, 0, Math.PI * 2);
             ctx.arc(obs.x + 35, obs.y + 75, 5, 0, Math.PI * 2);
@@ -324,31 +367,30 @@ function drawPowerUps() {
         ctx.rotate(Date.now() / 500);
         
         if (pu.type === 'speed') {
-            ctx.fillStyle = '#B8860B';
+            // Draw speed icon (lightning bolt)
+            ctx.fillStyle = '#00FF00';
             ctx.beginPath();
             ctx.moveTo(0, -15);
-            ctx.lineTo(10, 5);
+            ctx.lineTo(10, 0);
             ctx.lineTo(0, 0);
-            ctx.lineTo(-10, 5);
+            ctx.lineTo(0, 15);
+            ctx.lineTo(-10, 0);
+            ctx.lineTo(0, 0);
             ctx.closePath();
             ctx.fill();
             
-            ctx.fillStyle = '#F7F2EB';
-            ctx.font = 'bold 14px Georgia';
-            ctx.fillText('SPEED', -22, 22);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 12px Orbitron';
+            ctx.fillText('SPEED', -20, 28);
         } else if (pu.type === 'health') {
-            ctx.fillStyle = '#C45C26';
-            ctx.beginPath();
-            ctx.arc(0, 0, 12, 0, Math.PI * 2);
-            ctx.fill();
+            // Draw health icon (cross)
+            ctx.fillStyle = '#CC0000';
+            ctx.fillRect(-8, -3, 16, 6);
+            ctx.fillRect(-3, -8, 6, 16);
             
-            ctx.fillStyle = '#F7F2EB';
-            ctx.fillRect(-4, -8, 8, 16);
-            ctx.fillRect(-8, -4, 16, 8);
-            
-            ctx.fillStyle = '#F7F2EB';
-            ctx.font = 'bold 14px Georgia';
-            ctx.fillText('HEALTH', -24, 22);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 12px Orbitron';
+            ctx.fillText('HEALTH', -24, 28);
         }
         
         ctx.restore();
@@ -430,9 +472,9 @@ function updateGame() {
             gameState.health -= 20;
             gameState.obstacles.splice(index, 1);
             
-            createParticles(gameState.carX + 30, 500, '#C45C26', 15);
+            createParticles(gameState.carX + 30, 500, '#CC0000', 15);
             
-            ctx.fillStyle = 'rgba(196, 92, 38, 0.2)';
+            ctx.fillStyle = 'rgba(204, 0, 0, 0.3)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
     });
@@ -449,7 +491,7 @@ function updateGame() {
             }
             
             gameState.score += 50;
-            createParticles(pu.x + 20, pu.y + 20, pu.type === 'speed' ? '#B8860B' : '#C45C26', 10);
+            createParticles(pu.x + 20, pu.y + 20, pu.type === 'speed' ? '#00FF00' : '#CC0000', 10);
             gameState.powerUps.splice(index, 1);
         }
     });
@@ -568,10 +610,11 @@ function endGame(won) {
     
     if (won) {
         document.getElementById('final-score').textContent = gameState.score;
-        showScreen('victory');
+        showScreen('success');
         createConfetti();
     } else {
         document.getElementById('gameover-score').textContent = gameState.score;
+        document.getElementById('gameover-distance').textContent = Math.round(gameState.distance);
         showScreen('gameover');
     }
 }
@@ -628,7 +671,7 @@ document.addEventListener('touchend', () => {
 
 // Confetti for victory
 function createConfetti() {
-    const colors = ['#C45C26', '#B8860B', '#8F4219', '#D4A056', '#9A7209', '#2D2A26'];
+    const colors = ['#CC0000', '#00FF00', '#FFCC00', '#FF00FF', '#00FFFF', '#FFFFFF'];
     const confettiCount = 150;
     
     for (let i = 0; i < confettiCount; i++) {
@@ -653,34 +696,26 @@ function createConfetti() {
     }
 }
 
-// Replay buttons
-document.getElementById('replay-btn').addEventListener('click', () => {
-    showScreen('start');
+// Reveal mystery message button
+document.getElementById('reveal-btn').addEventListener('click', () => {
+    showScreen('mystery');
 });
 
+// Retry buttons
 document.getElementById('retry-btn').addEventListener('click', () => {
+    resetLieDetector();
+    gameState.lieDetectorAttempts = 0;
     startGame();
 });
 
-// Progress dots click handlers
-document.querySelectorAll('.progress-dots .dot').forEach(dot => {
-    dot.addEventListener('click', (e) => {
-        const targetScene = parseInt(e.target.dataset.scene);
-        if (targetScene < gameState.cutsceneStep) {
-            gameState.cutsceneStep = targetScene;
-            const scenes = document.querySelectorAll('.cutscene-container .scene');
-            scenes.forEach((scene, index) => {
-                if (index === targetScene) {
-                    scene.classList.remove('hidden');
-                    typeText(document.getElementById(`dialogue-${targetScene}`), cutsceneDialogues[targetScene], 40);
-                } else {
-                    scene.classList.add('hidden');
-                }
-            });
-            updateProgressDots(targetScene);
-        }
-    });
+document.getElementById('restart-btn').addEventListener('click', () => {
+    resetLieDetector();
+    gameState.lieDetectorAttempts = 0;
+    showScreen('intro');
+    const introMessage = document.getElementById('intro-message');
+    const message = "This is a super encrypted mystery message for one doc.";
+    typeText(introMessage, message, 40);
 });
 
-console.log('The Overthinking Saviour - Game Loaded');
-console.log('Happy Valentine\'s Day');
+console.log('CLASSIFIED MISSION INITIATED');
+console.log('AUTHENTICATION REQUIRED');

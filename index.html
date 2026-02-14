@@ -3,151 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Overthinking Saviour</title>
+    <title>Classified Mission - Authentication Required</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="game-container">
-        <!-- Start Screen -->
-        <div id="start-screen" class="screen active">
-            <div class="title-container">
-                <h1 class="game-title">The Overthinking Saviour</h1>
-                <span class="subtitle">A Valentine's Special</span>
-                <div class="decorative-line"></div>
+        <!-- Initial Secret Message Screen -->
+        <div id="intro-screen" class="screen active">
+            <div class="classified-header">
+                <div class="classified-stamp">CLASSIFIED</div>
+                <div class="encryption-badge">TOP SECRET // ENCRYPTED</div>
             </div>
-            <div class="hero-photo">
-                <img src="assets/1.JPG" alt="The Hero" id="hero-img">
-                <p class="hero-name">Dr. Overthinking Saviour</p>
+            
+            <div class="message-display">
+                <div class="typing-text" id="intro-message"></div>
             </div>
-            <div class="story-text">
-                <p>You are a doctor, on your way to save lives...</p>
-                <p>But destiny has other plans.</p>
+            
+            <div class="auth-question">
+                <p>ARE YOU DR. OVERTHINKER SAVIOUR?</p>
+                <div class="button-group">
+                    <button id="no-btn" class="mission-btn danger">NO</button>
+                    <button id="yes-btn" class="mission-btn primary">YES - I'LL TAKE MY CHANCES</button>
+                </div>
             </div>
-            <button id="start-btn" class="game-btn">Begin Your Journey</button>
         </div>
 
-        <!-- Cutscene: The Accident -->
-        <div id="cutscene-screen" class="screen">
-            <div class="cutscene-container">
-                <div class="scene" id="scene-0">
-                    <img src="assets/2.JPG" alt="In the car" class="scene-img">
-                    <p class="dialogue" id="dialogue-0"></p>
+        <!-- Authentication Overview Screen -->
+        <div id="auth-overview-screen" class="screen">
+            <div class="mission-briefing">
+                <h2>MISSION BRIEFING</h2>
+                <div class="briefing-content">
+                    <p><span class="highlight">TARGET:</span> Dr. Overthinker Saviour</p>
+                    <p><span class="highlight">STATUS:</span> Unverified Identity</p>
+                    <p><span class="highlight">MISSION:</span> Complete Authentication Protocol</p>
                 </div>
-                <div class="scene hidden" id="scene-1">
-                    <div class="crash-animation" id="crash-effect">
-                        <span class="crash-text">CRASH</span>
+                
+                <div class="warning-box">
+                    <div class="warning-icon">⚠</div>
+                    <p>You must prove your identity before proceeding. This is a two-stage authentication process:</p>
+                </div>
+                
+                <div class="auth-stages">
+                    <div class="auth-stage">
+                        <div class="stage-number">01</div>
+                        <div class="stage-content">
+                            <h3>MEMORY AUTHENTICATION</h3>
+                            <p>Lie Detector Test</p>
+                        </div>
                     </div>
-                    <p class="dialogue" id="dialogue-1"></p>
+                    
+                    <div class="auth-stage">
+                        <div class="stage-number">02</div>
+                        <div class="stage-content">
+                            <h3>SKILLS AUTHENTICATION</h3>
+                            <p>Emergency Response Test</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="scene hidden" id="scene-2">
-                    <img src="assets/3.JPG" alt="The injured" class="scene-img">
-                    <p class="dialogue" id="dialogue-2"></p>
-                </div>
+                
+                <button id="start-auth-btn" class="mission-btn pulse">INITIATE AUTHENTICATION</button>
             </div>
-            <div class="cutscene-progress">
-                <div class="progress-dots">
-                    <span class="dot active" data-scene="0"></span>
-                    <span class="dot" data-scene="1"></span>
-                    <span class="dot" data-scene="2"></span>
+        </div>
+
+        <!-- Lie Detector Test Screen -->
+        <div id="lie-detector-screen" class="screen">
+            <div class="lie-detector-interface">
+                <div class="detector-header">
+                    <h2>LIE DETECTOR TEST</h2>
+                    <div class="status-indicator active">MONITORING...</div>
                 </div>
+                
+                <div class="detector-visual">
+                    <div class="pulse-line"></div>
+                    <div class="pulse-line"></div>
+                    <div class="pulse-line"></div>
+                </div>
+                
+                <div class="question-container">
+                    <div class="question-label">SECURITY QUESTION:</div>
+                    <p class="question-text">Our Bloody Surgeon was standing still when a bike came and crashed with her. Near which military campus gate did it happen?</p>
+                </div>
+                
+                <div class="options-grid">
+                    <button class="option-btn" data-answer="A">A. ARIES</button>
+                    <button class="option-btn" data-answer="B">B. LEO</button>
+                    <button class="option-btn" data-answer="C">C. TAURUS</button>
+                    <button class="option-btn" data-answer="D">D. BULLUS</button>
+                </div>
+                
+                <div class="feedback-message" id="detector-feedback"></div>
             </div>
-            <button id="continue-btn" class="game-btn">Continue</button>
+        </div>
+
+        <!-- Skills Intro Screen -->
+        <div id="skills-intro-screen" class="screen">
+            <div class="mission-briefing">
+                <div class="success-check">
+                    <div class="checkmark">✓</div>
+                    <p>MEMORY AUTHENTICATION: <span class="success">VERIFIED</span></p>
+                </div>
+                
+                <h2>SKILLS AUTHENTICATION</h2>
+                <p class="instruction-text">Our doc is super skilled. Now let's see how much skills you possess.</p>
+                
+                <div class="mission-context">
+                    <div class="context-icon">⚡</div>
+                    <p><strong>SITUATION:</strong> You are all alone in an ambulance with a dying patient. You must navigate through obstacles and reach the hospital before the patient's health reaches zero.</p>
+                    <p><strong>OBJECTIVE:</strong> Reach the hospital. Save the patient. Prove you are the Saviour.</p>
+                </div>
+                
+                <div class="controls-info">
+                    <p><span class="key-badge">←</span> <span class="key-badge">→</span> Arrow Keys or Swipe to Drive</p>
+                    <p>Collect <span class="item-badge">SPEED</span> and <span class="item-badge">HEALTH</span> packs</p>
+                </div>
+                
+                <button id="start-game-btn" class="mission-btn pulse">BEGIN MISSION</button>
+            </div>
         </div>
 
         <!-- Game Screen -->
         <div id="game-screen" class="screen">
-            <div class="game-ui">
-                <div class="health-bar-container">
-                    <span>Patient Health</span>
+            <div class="game-header">
+                <div class="mission-status">MISSION IN PROGRESS</div>
+                <div class="distance-display">HOSPITAL: <span id="distance-value">0</span>m</div>
+            </div>
+            
+            <div class="game-stats">
+                <div class="stat-box health-box">
+                    <span class="stat-label">PATIENT VITALS</span>
                     <div class="progress-bar health-bar">
                         <div class="progress-fill health-fill" id="health-fill"></div>
                     </div>
-                    <span class="value" id="health-value">100%</span>
+                    <span class="stat-value" id="health-value">100%</span>
                 </div>
-                <div class="distance-container">
-                    <span>Distance to Hospital</span>
-                    <div class="progress-bar distance-bar">
-                        <div class="progress-fill distance-fill" id="distance-fill"></div>
-                    </div>
-                    <span class="value" id="distance-value">0m</span>
-                </div>
-                <div class="score-container">
-                    <span>Score</span>
-                    <span class="score-value" id="score-value">0</span>
+                <div class="stat-box score-box">
+                    <span class="stat-label">SCORE</span>
+                    <span class="stat-value" id="score-value">0</span>
                 </div>
             </div>
+            
             <div class="canvas-container">
                 <canvas id="game-canvas" width="800" height="600"></canvas>
             </div>
-            <div class="game-controls">
-                <p>Arrow keys or swipe to drive | Collect Speed and Health packs</p>
-            </div>
+            
             <div class="power-up-indicators">
                 <div class="power-up-indicator" id="speed-indicator" style="display: none;">
-                    SPEED BOOST ACTIVE
+                    ⚡ SPEED BOOST ACTIVE
                 </div>
             </div>
         </div>
 
-        <!-- Victory Screen -->
-        <div id="victory-screen" class="screen">
-            <div class="celebration">
-                <h2 class="victory-title">Mission Accomplished</h2>
-            </div>
-            <div class="certificate">
-                <div class="certificate-border">
-                    <div class="certificate-header">
-                        <h2>Certificate of Authentication</h2>
-                    </div>
-                    <div class="certificate-content">
-                        <img src="assets/4.JPG" alt="Certificate Photo" class="cert-photo">
-                        <p class="cert-text">This certifies that</p>
-                        <h3 class="cert-name">YOU</h3>
-                        <p class="cert-text">are officially recognized as</p>
-                        <h2 class="cert-title">The Real Overthinking Saviour Doc</h2>
-                        <p class="cert-reason">For successfully saving the injured biker<br>with courage, speed, and medical expertise.<br><br>
-                        Final Score: <span id="final-score" class="score-highlight">0</span></p>
-                    </div>
-                    <div class="certificate-seal">
-                        <div class="seal">✤</div>
-                    </div>
+        <!-- Success Authentication Screen -->
+        <div id="success-screen" class="screen">
+            <div class="success-container">
+                <div class="classified-header">
+                    <div class="verified-stamp">VERIFIED</div>
+                    <div class="success-badge">AUTHENTICATION COMPLETE</div>
                 </div>
-            </div>
-            <div class="valentine-message">
-                <h3>A Special Valentine's Message</h3>
-                <div class="message-card">
-                    <img src="assets/5.JPG" alt="Valentine" class="valentine-img">
-                    <div class="love-content">
-                        <p class="love-text" id="valentine-message">
-                            Wishing you a very Happy Valentine's Day.<br><br>
-                            You are the real hero who saves lives every day.<br>
-                            Thank you for being the amazing person you are.<br>
-                            With love and admiration.
-                        </p>
-                        <div class="signature">
-                            <p>— Your Secret Valentine</p>
+                
+                <div class="success-content">
+                    <div class="profile-image">
+                        <img src="assets/4.JPG" alt="The Saviour">
+                    </div>
+                    
+                    <h2>IDENTITY CONFIRMED</h2>
+                    <p class="success-message">We are now successfully convinced that you are our Saviour Overthinker Doc.</p>
+                    
+                    <div class="credentials">
+                        <div class="credential-item">
+                            <span class="credential-label">MEMORY TEST:</span>
+                            <span class="credential-value">PASSED</span>
+                        </div>
+                        <div class="credential-item">
+                            <span class="credential-label">SKILLS TEST:</span>
+                            <span class="credential-value">PASSED</span>
+                        </div>
+                        <div class="credential-item">
+                            <span class="credential-label">FINAL SCORE:</span>
+                            <span class="credential-value" id="final-score">0</span>
                         </div>
                     </div>
+                    
+                    <div class="mystery-reveal">
+                        <p>The mystery message has been decrypted. You are authorized to view.</p>
+                        <button id="reveal-btn" class="mission-btn pulse primary">SHOW ME THE MYSTERY MESSAGE</button>
+                    </div>
                 </div>
             </div>
-            <div class="photo-gallery">
-                <h3>Memories</h3>
-                <div class="gallery-grid">
-                    <img src="assets/6.JPG" alt="Memory 1" class="gallery-photo">
+        </div>
+
+        <!-- Final Mystery Message Screen -->
+        <div id="mystery-screen" class="screen">
+            <div class="mystery-container">
+                <div class="classified-header">
+                    <div class="declassified-stamp">DECLASSIFIED</div>
+                </div>
+                
+                <div class="mystery-content">
+                    <h2>THE MESSAGE</h2>
+                    
+                    <div class="message-card">
+                        <img src="assets/5.JPG" alt="Valentine" class="valentine-photo">
+                        <div class="message-body">
+                            <p class="salutation">My Dearest Dr. Overthinker,</p>
+                            <p class="love-text">
+                                Through all the chaos of emergency rooms, the endless overthinking, 
+                                and the battles fought in the shadows... you never cease to amaze me.
+                                You save lives when hope seems lost. You carry the weight of 
+                                others' pain and still find ways to smile.
+                            </p>
+                            <p class="love-text">
+                                This Valentine's Day, I want you to know something:
+                                You are not just a saviour to your patients. You're my hero too.
+                                The world is better because you're in it.
+                            </p>
+                            <p class="love-text">
+                                I chose you. I'll always choose you.
+                            </p>
+                            <p class="closing">With all my heart and admiration,<br>— Your Secret Valentine 💝</p>
+                        </div>
+                    </div>
+                    
+                    <div class="memories-section">
+                        <h3>SHARED MEMORIES</h3>
+                        <div class="gallery-grid">
+                            <img src="assets/1.JPG" alt="Memory" class="gallery-photo">
+                            <img src="assets/2.JPG" alt="Memory" class="gallery-photo">
+                            <img src="assets/3.JPG" alt="Memory" class="gallery-photo">
+                            <img src="assets/6.JPG" alt="Memory" class="gallery-photo">
+                        </div>
+                    </div>
+                    
+                    <button id="restart-btn" class="mission-btn">RESTART MISSION</button>
                 </div>
             </div>
-            <button id="replay-btn" class="game-btn">Play Again</button>
         </div>
 
         <!-- Game Over Screen -->
         <div id="gameover-screen" class="screen">
-            <h2 class="gameover-title">The Patient Didn't Make It</h2>
-            <p class="gameover-text">You hit too many obstacles. Try again, Doctor.</p>
-            <img src="assets/3.JPG" alt="Try again" class="try-again-img">
-            <div class="final-score">
-                <p>Your Score: <span id="gameover-score">0</span></p>
+            <div class="failure-container">
+                <div class="classified-header">
+                    <div class="failed-stamp">FAILED</div>
+                </div>
+                
+                <h2>MISSION FAILED</h2>
+                <p>The patient did not make it. Your identity remains unverified.</p>
+                
+                <div class="stats-summary">
+                    <p>Score: <span id="gameover-score">0</span></p>
+                    <p>Distance: <span id="gameover-distance">0</span>m</p>
+                </div>
+                
+                <button id="retry-btn" class="mission-btn primary">RETRY AUTHENTICATION</button>
             </div>
-            <button id="retry-btn" class="game-btn">Try Again</button>
         </div>
     </div>
 
