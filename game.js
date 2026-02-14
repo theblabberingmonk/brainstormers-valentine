@@ -208,6 +208,11 @@ document.getElementById('yes-btn').addEventListener('click', () => {
     showScreen('authOverview');
 });
 
+// Take Chances Button
+document.getElementById('chances-btn').addEventListener('click', () => {
+    showScreen('authOverview');
+});
+
 // Start Authentication
 document.getElementById('start-auth-btn').addEventListener('click', () => {
     showScreen('lieDetector');
